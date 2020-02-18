@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements
         RecognitionListener {
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements
 
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
-                "en");
+                "tr");
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements
         returnedError = findViewById(R.id.errorView1);
         progressBar =  findViewById(R.id.progressBar1);
         progressBar.setVisibility(View.INVISIBLE);
-
+        setRecogniserIntent();
 
         // start speech recogniser
         resetSpeechRecognizer();
@@ -78,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
-        setRecogniserIntent();
         speech.startListening(recognizerIntent);
     }
 
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBufferReceived(byte[] buffer) {
-        Log.i(LOG_TAG, "onBufferReceived: " + buffer);
+        Log.i(LOG_TAG, "onBufferReceived: " + Arrays.toString(buffer));
     }
 
     @Override
@@ -148,11 +148,12 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(LOG_TAG, "onResults");
         ArrayList<String> matches = results
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        String text = "";
+        StringBuilder text = new StringBuilder();
+        assert matches != null;
         for (String result : matches)
-            text += result + "\n";
+            text.append(result).append("\n");
 
-        returnedText.setText(text);
+        returnedText.setText(text.toString());
         speech.startListening(recognizerIntent);
     }
 
